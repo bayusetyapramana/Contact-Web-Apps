@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Form, Grid, Button, Segment } from 'semantic-ui-react';
+import { Form, Grid, Button, Segment, Modal, Icon } from 'semantic-ui-react';
 import { Field, reduxForm } from 'redux-form';
 import classnames from 'classnames';
 import {result} from 'lodash';
+import {Link} from 'react-router-dom';
 
 const validate = (values) => {
   const errors = {name:{}};
@@ -25,6 +26,8 @@ const validate = (values) => {
 
 class ContactEdit extends Component {
 
+  state = { modalOpen: false }
+
   componentWillReceiveProps = (nextProps) => { // Load Contact Asynchronously
     const { contact } = nextProps;
     if(contact._id !== this.props.contact._id) { // Initialize form only once
@@ -42,22 +45,28 @@ class ContactEdit extends Component {
 
   renderFieldId = ({ input, contact, label, type, meta: { touched, error } }) => (
     <Form.Input className={classnames({error:touched && error})}>
-      <label>{result(contact, 'data.firstName')}</label>
+      <label>{label}</label>
       <input {...input} placeholder={label} type={type} disabled/>
       {touched && error && <span className="error">{error.message}</span>}
     </Form.Input>
   )
 
+
+  handleOpen = () => this.setState({ modalOpen: true })
+
+  handleClose = () => this.setState({ modalOpen: false })
+
   render() {
-    const { handleSubmit, pristine, submitting, loading, contact } = this.props;
+    const { handleSubmit, pristine, submitting, loading, contact, data } = this.props;
+    console.log('ini data message', data);
     return (
       <Grid centered columns={2}>
         <Grid.Column>
-          <h1 style={{marginTop:"1em"}}>{result(contact, 'data.id') ? 'Edit Contact' : 'Add Contact'}</h1>
+          <h1 style={{marginTop:"1em"}}>Edit Contact</h1>
              <Segment.Group>
                <Segment>FirstName: {result(contact, 'data.firstName')}</Segment>
                 <Segment>LastName: {result(contact, 'data.lastName')}</Segment>
-                <Segment>Age: {result(contact, 'data.age')}</Segment>
+                 <Segment>LastName: {result(contact, 'data.age')}</Segment>
              </Segment.Group>
           <Form onSubmit={handleSubmit} loading={loading}>
             <Form.Group widths='equal'>
@@ -65,11 +74,31 @@ class ContactEdit extends Component {
               <Field name="lastName" type="text" component={this.renderField} label="Last Name"/>
             </Form.Group>
             <Field name="age" type="text" component={this.renderField} label="Age"/>
-            <Form.Input name="id" type="text" value={result(contact, 'data.id')} disabled />
-            <Button primary type='submit' disabled={pristine || submitting}>Update</Button>
-          </Form>
+          <Modal
+        trigger={  <Button onClick={this.handleOpen} primary type='submit' disabled={pristine || submitting}>Update</Button>}
+        open={this.state.modalOpen}
+        onClose={this.handleClose}
+        basic
+        size='small'
+      >
+        <Modal.Content>
+          <h3>Succesfully edit contact!</h3>
+        </Modal.Content>
+        <Modal.Actions>
+          <Link to ={'/'}>
+          <Button color='green' onClick={this.handleClose} inverted>
+            <Icon name='checkmark' /> Got it
+          </Button>
+        </Link>
+        </Modal.Actions>
+      </Modal>
+        </Form>
+
         </Grid.Column>
       </Grid>
+
+
+
     )
   }
 }

@@ -21,7 +21,7 @@ class ContactFormPage extends Component {
     }
   }
 
-  submit = (contact, id) => {
+  submit = (contact, id, message) => {
     this.setState = ({redirect:true})
     const { _id } = this.props.match.params;
       return this.props.updateContact(contact, _id)
@@ -31,12 +31,15 @@ class ContactFormPage extends Component {
   }
 
   render() {
+    const message = this.props;
+    console.log('ini data contact', message);
+    this.setState = ({redirect:true});
     return (
       <div>
         {
           this.state.redirect ?
           <Redirect to="/" /> :
-          <ContactEdit contact={this.props.contact} loading={this.props.loading} onSubmit={this.submit} />
+          <ContactEdit  contact={this.props.contact} loading={this.props.loading} onSubmit={this.submit} />
         }
       </div>
     )

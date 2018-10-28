@@ -112,7 +112,6 @@ export default (state=defaultState, action={}) => {
     }
 
     case 'DELETE_CONTACT_FULFILLED': {
-      const id = action.payload.data.id;
       return {
         ...state,
         loading: true,
